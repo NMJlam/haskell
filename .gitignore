@@ -1,0 +1,63 @@
+# Stack artifact files
+.stack-work/
+stack.yaml.lock
+
+# Cabal artifact files
+dist/
+dist-newstyle/
+cabal.project.local
+cabal.project.local~
+.ghc.environment.*
+
+# GHC/GHCi files
+*.hi
+*.o
+*.dyn_hi
+*.dyn_o
+*.prof
+*.aux
+*.hp
+*.eventlog
+.HTF/
+
+# Executable files
+*.exe
+*.app
+
+# Editor and IDE files
+*~
+*.swp
+*.swo
+.vscode/
+.idea/
+*.iml
+.history/
+.DS_Store
+
+# Haskell Language Server
+hie.yaml
+.hie/
+
+# Tags files
+tags
+TAGS
+codex.tags
+
+# Local configuration
+.envrc
+.direnv/
+
+# Documentation
+.haddock/
+*.haddock
+
+# Test coverage
+.hpc/
+*.tix
+
+# Benchmarking
+*.benchmark
+
+# Temporary files
+*.tmp
+.temp/
