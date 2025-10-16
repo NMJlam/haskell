@@ -5,9 +5,15 @@
 --
 -- >>> let x = Just 10    -- a Maybe Int containing 10
 -- >>> let y = Nothing    -- a Maybe Int with no value
-module MappingMaybe () where
+module MappingMaybe
+  ( mapMaybe,
+  flatMapMaybe,
+  parseNumber,
+  chainFunctions, 
+  )
+where
 
-import Text.Read (readMaybe)
+import Text.Read (readMaybe, readListDefault)
 
 -- | Applies a function to the value inside a `Just`, producing a new `Maybe` value.
 -- If the input is `Nothing`, it returns `Nothing`.
@@ -21,7 +27,7 @@ import Text.Read (readMaybe)
 -- >>> mapMaybe reverse (Just "hi")
 -- Just "ih"
 mapMaybe :: (a -> b) -> Maybe a -> Maybe b
-mapMaybe = undefined
+mapMaybe f ma = f <$> ma
 
 -- | Applies a function that returns a `Maybe` to the value inside a `Just`,
 -- flattening the result. If the input is `Nothing`, it returns `Nothing`.
@@ -41,8 +47,9 @@ mapMaybe = undefined
 -- >>> flatMapMaybe parseNumber Nothing
 -- Nothing
 flatMapMaybe :: (a -> Maybe b) -> Maybe a -> Maybe b
-flatMapMaybe = undefined
-
+flatMapMaybe _ Nothing = Nothing
+flatMapMaybe f (Just a) = f a
+   
 -- | Parse a number from String
 -- >>> parseNumber "42.5"
 -- Just 42.5
@@ -77,5 +84,10 @@ reciprocal n = 1 / n
 -- Nothing
 -- >>> chainFunctions "foo"
 -- Nothing
-chainFunctions :: String -> Maybe Double
-chainFunctions = undefined
+-- chainFunctions :: String -> Maybe Double
+chainFunctions a = result 
+  where 
+    justNumber = flatMapMaybe parseNumber (Just a) 
+    justNonZero = flatMapMaybe nonZero justNumber 
+    result = fmap reciprocal justNonZero 
+
