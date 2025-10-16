@@ -47,7 +47,8 @@ int s = case (reads s :: [(Int, String)]) of
 -- >>> (is 'c') "abc"
 -- Nothing
 is :: Char -> String -> Maybe (String, Char)
-is c s = undefined
+is c (x:xs) = if x == c then Just (xs, x) else Nothing
+is _ "" = Nothing
 
 -- | The 'matches' function checks if two strings match character by character.
 -- If the characters match up to the length of the first string, it returns 'True'.
@@ -68,7 +69,10 @@ is c s = undefined
 -- >>> matches "SOMETHING" ""
 -- False
 matches :: String -> String -> Bool
-matches = undefined
+matches string1 string2 = length (filter id trueList ) == length string1
+  where
+    trueList = zipWith (==) string1 string2 
+
 
 -- | Parse a string exactly from the input.
 -- /Hint/ the drop function might be helpful
@@ -82,7 +86,15 @@ matches = undefined
 -- Nothing
 string :: String -> String -> Maybe (String, String)
 string "" s = Just (s, "")
-string expected input = undefined
+string _ "" = Nothing 
+string expected input =
+  let 
+    matching = matches expected input
+    matched = drop (length expected) input
+  in 
+    if matching 
+      then Just (matched, expected)
+      else Nothing
 
 -- | Parse the string GET
 -- >>> parseGET "GET /index.html HTTP/1.1"
@@ -91,7 +103,7 @@ string expected input = undefined
 -- >>> parseGET "POST /index.html HTTP/1.1"
 -- Nothing
 parseGET :: String -> Maybe (String, String)
-parseGET = undefined
+parseGET = string "GET" 
 
 -- | Parse whitespace function checks if the input string starts with either a space (' ') or a tab ('\t').
 -- If it does, it removes all of the leading whitespace and returns the rest of the string inside a `Just`.
@@ -139,7 +151,7 @@ whitespace x = case x of
 -- Just (" HTTP/1.1","")
 parseURL :: String -> Maybe (String, String)
 parseURL [] = Nothing
-parseURL s = undefined
+parseURL s = Just (rest, url) 
   where
     (url, rest) = span (/= ' ') s
 
@@ -162,12 +174,12 @@ parseURL s = undefined
 -- Nothing
 parseHTTPRequest :: String -> Maybe (String, (String, String))
 parseHTTPRequest input =
-    case undefined of
-        Just (rest1, _) ->
-            case undefined of
+    case parseGET input of  -- Parse "GET"
+        Just (rest1, method) ->
+            case whitespace rest1 of  -- Consume whitespace
                 Just (rest2, _) ->
-                    case undefined of
-                        Just (rest3, url) -> undefined
+                    case parseURL rest2 of  -- Parse the URL
+                        Just (rest3, url) -> Just (rest3, (method, url))
                         Nothing -> Nothing
                 Nothing -> Nothing
         Nothing -> Nothing

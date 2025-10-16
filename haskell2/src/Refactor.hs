@@ -18,8 +18,7 @@ module Refactor (doubleAll, flipBools, sumPositives, grade, classify, avgPositiv
 -- >>> doubleAll [0,-3]
 -- [0,-6]
 doubleAll :: [Int] -> [Int]
-doubleAll [] = []
-doubleAll (x : xs) = (2 * x) : doubleAll xs
+doubleAll = map (*2)
 
 -- |
 -- Negates every Bool in a list.
@@ -33,8 +32,7 @@ doubleAll (x : xs) = (2 * x) : doubleAll xs
 -- >>> flipBools (replicate 4 True)
 -- [False,False,False,False]
 flipBools :: [Bool] -> [Bool]
-flipBools [] = []
-flipBools (x : xs) = not x : flipBools xs
+flipBools = map (\x -> not x)
 
 -- |
 -- Sums only the positive integers in a list.
@@ -51,11 +49,9 @@ flipBools (x : xs) = not x : flipBools xs
 -- >>> sumPositives [10, -1, 2, -3, 4]
 -- 16
 sumPositives :: [Int] -> Int
-sumPositives [] = 0
-sumPositives (x : xs) =
-    if x > 0
-        then x + sumPositives xs
-        else sumPositives xs
+sumPositives mixedList = foldr (+) 0 posList 
+  where 
+    posList = filter (>0) mixedList 
 
 -- |
 -- Returns a letter grade for a score.
@@ -63,19 +59,12 @@ sumPositives (x : xs) =
 -- >>> map grade [95, 84, 73, 65, 12]
 -- ["HD","HD","D","C","N"]
 grade :: Int -> String
-grade n =
-    if n >= 80
-        then "HD"
-        else
-            if n >= 70
-                then "D"
-                else
-                    if n >= 60
-                        then "C"
-                        else
-                            if n >= 50
-                                then "P"
-                                else "N"
+grade score 
+  | score >= 80 = "HD"
+  | score >= 70 = "D"
+  | score >= 60 = "C"
+  | score >= 50 = "P"
+  | otherwise = "N"
 
 -- |
 -- Classifies an integer as "zero", "positive", or "negative".
@@ -91,12 +80,12 @@ grade n =
 -- >>> classify (-2)
 -- "negative"
 classify :: Int -> String
-classify n =
-    case True of
-        _
-            | n == 0 -> "zero"
-            | n > 0 -> "positive"
-            | otherwise -> "negative"
+classify n 
+  | n > 0 = "positive"
+  | n == 0 = "zero"
+  | n  < 0 = "negative"
+  | otherwise = "not a number"
+
 
 -- |
 -- Computes the average of all positive numbers in a list of Doubles.
@@ -114,13 +103,8 @@ classify n =
 -- >>> avgPositives [10.0, 20.0]
 -- Just 15.0
 avgPositives :: [Double] -> Maybe Double
-avgPositives xs = go xs 0 0
-  where
-    go [] total count =
-        if count == 0
-            then Nothing
-            else Just (total / count)
-    go (y : ys) total count =
-        if y > 0
-            then go ys (total + y) (count + 1)
-            else go ys total count
+avgPositives numList = 
+  let positives = filter (>0) numList
+  in if null positives
+    then Nothing
+    else Just (sum positives / fromIntegral (length positives ))
