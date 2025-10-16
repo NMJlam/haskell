@@ -3,6 +3,7 @@ module Main (main) where
 import BinTree
 import NaryTree
 import MappingMaybe 
+import Examples
 
 main :: IO ()
 main = do
@@ -28,3 +29,18 @@ main = do
   print (chainFunctions "0")
   print (chainFunctions "5")
   print (chainFunctions "foo")
+
+  print (eulerProblem1 1000)
+
+  print (allEvens [0,0,0,4])
+
+  print (anyOdd [1,2,3,4,5])
+
+
+  print (sumTwoLists [1,2,3,4,5] [1,2,3,4,5])
+  
+  print (firstItems [(2,1), (4,3), (6,5)])
+
+  print (nestedMap (+1) [[1,2,3], [4,5,6], [7,8,9]])
+
+

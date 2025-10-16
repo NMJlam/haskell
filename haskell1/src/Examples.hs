@@ -15,7 +15,14 @@
 --
 -- By convention, a polymorphic type is called `a`, but any (lower case)
 -- letter would work.
-module Examples () where
+module Examples (
+  eulerProblem1,
+  allEvens,
+  anyOdd,
+  sumTwoLists, 
+  firstItems,
+  nestedMap,
+) where
 
 -- \$setup
 
@@ -24,7 +31,9 @@ module Examples () where
 -- >>> eulerProblem1 1000
 -- 233168
 eulerProblem1 :: Int -> Int
-eulerProblem1 n = undefined
+eulerProblem1 n = sum [ x | x <- list, x `mod` 3 == 0 || x `mod` 5 == 0] 
+  where 
+    list = [1..n-1]
 
 -- | Function to check if every element in a list is even
 --
@@ -33,7 +42,7 @@ eulerProblem1 n = undefined
 -- >>> allEvens [2,4]
 -- True
 allEvens :: [Int] -> Bool
-allEvens = undefined
+allEvens = foldr (\x acc -> even x && acc) True
 
 -- | Function to check if any element is odd
 --
@@ -42,14 +51,14 @@ allEvens = undefined
 -- >>> anyOdd [0,0,0,4]
 -- False
 anyOdd :: [Int] -> Bool
-anyOdd = undefined
+anyOdd = foldr (\x acc -> even x || acc ) False 
 
 -- | Function to sum every element in two lists
 --
 -- >>> sumTwoLists [1,2,3,4,5] [1,2,3,4,5]
 -- [2,4,6,8,10]
 sumTwoLists :: [Integer] -> [Integer] -> [Integer]
-sumTwoLists = undefined
+sumTwoLists = zipWith (+) 
 
 -- | Function to get first item in a list of tuples
 --
@@ -58,7 +67,7 @@ sumTwoLists = undefined
 -- >>> firstItems [(2,1), (4,3), (6,5)]
 -- [2,4,6]
 firstItems :: [(a, b)] -> [a]
-firstItems = undefined
+firstItems list = [x | (x, _) <- list]
 
 -- | Apply function to every element in a nested list
 --
@@ -69,4 +78,4 @@ firstItems = undefined
 -- >>> nestedMap (+1) [[1,2,3], [4,5,6], [7,8,9]]
 -- [[2,3,4],[5,6,7],[8,9,10]]
 nestedMap :: (a -> b) -> [[a]] -> [[b]]
-nestedMap = undefined
+nestedMap f = map (map f) 
