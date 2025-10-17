@@ -16,16 +16,16 @@ type WebSocketMessage = (String, String)
 -- "    type: GET\n    link: http://example2.com\n    ----"
 prettyPrintMessage :: Int -> WebSocketMessage -> String
 prettyPrintMessage indentLevel (msgType, url) =
-    replicate (2 * indentLevel) ' '
-        ++ "type: "
-        ++ msgType
-        ++ "\n"
-        ++ replicate (2 * indentLevel) ' '
-        ++ "link: "
-        ++ url
-        ++ "\n"
-        ++ replicate (2 * indentLevel) ' '
-        ++ "----"
+  replicate (2 * indentLevel) ' '
+    ++ "type: "
+    ++ msgType
+    ++ "\n"
+    ++ replicate (2 * indentLevel) ' '
+    ++ "link: "
+    ++ url
+    ++ "\n"
+    ++ replicate (2 * indentLevel) ' '
+    ++ "----"
 
 -- | calcIndent function calculates the indentation level based on WebSocket message types.
 -- If the previous message, equal the current type, the indent should increase by one.
@@ -45,7 +45,11 @@ prettyPrintMessage indentLevel (msgType, url) =
 -- >>> calcIndent ("POST", [0,1,2]) ("GET", "http://example.com")
 -- ("GET",[0,1,2,0])
 calcIndent :: (String, [Int]) -> WebSocketMessage -> (String, [Int])
-calcIndent (prevType, acc) (msgType, _) = undefined
+calcIndent (prevType, acc) (msgType, _)
+  | prevType == msgType = (msgType, acc ++ [lastElemPlusOne])
+  | otherwise = (msgType, acc ++ [0])
+  where
+    lastElemPlusOne = if null acc then 0 else last acc + 1
 
 -- | Function to pretty print an array of WebSocket messages with indentation based on message type
 -- /Hint/ Use foldl to `reduce` across an accumulator of type  (String, [Int])
@@ -61,24 +65,31 @@ calcIndent (prevType, acc) (msgType, _) = undefined
 -- >>> calculateIndents [("GET", "http://example.com")]
 -- [0]
 calculateIndents :: [WebSocketMessage] -> [Int]
-calculateIndents = undefined
+calculateIndents [] = []
+calculateIndents (x:xs) = history
+  where
+    (msgType, _) = x
+    (_, history) = foldl calcIndent (msgType, [0]) xs
 
 -- | formatOutput generates a string that pretty-prints a list of WebSocket messages
 -- with appropriate indentation based on message types.
 -- >>> formatOutput exampleMessages
 -- "type: GET\nlink: /index.html\n----\n  type: GET\n  link: /hello/world\n  ----\n    type: GET\n    link: /\n    ----\ntype: POST\nlink: /submit\n----\ntype: GET\nlink: /contact\n----\n  type: GET\n  link: /about\n  ----\ntype: POST\nlink: /login\n----\n  type: POST\n  link: /logout\n  ----"
 formatOutput :: [WebSocketMessage] -> String
-formatOutput = undefined
+formatOutput messages = intercalate "\n" msgArr 
+  where 
+    idents = calculateIndents messages 
+    msgArr = zipWith prettyPrintMessage idents messages 
 
 -- Example usage
 exampleMessages :: [WebSocketMessage]
 exampleMessages =
-    [ ("GET", "/index.html")
-    , ("GET", "/hello/world")
-    , ("GET", "/")
-    , ("POST", "/submit")
-    , ("GET", "/contact")
-    , ("GET", "/about")
-    , ("POST", "/login")
-    , ("POST", "/logout")
-    ]
+  [ ("GET", "/index.html"),
+    ("GET", "/hello/world"),
+    ("GET", "/"),
+    ("POST", "/submit"),
+    ("GET", "/contact"),
+    ("GET", "/about"),
+    ("POST", "/login"),
+    ("POST", "/logout")
+  ]
